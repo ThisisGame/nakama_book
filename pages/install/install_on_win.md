@@ -108,3 +108,16 @@ Nakama提供了一个命令来自动创建数据库和表格。
 ### 6. 停止Nakama服务器
 
 直接在PowerShell控制台`ctrl+c`就行。
+
+### 7. 自动创建了data目录
+
+运行Nakama后，在文件夹里自动创建了下面的空目录结构。
+
+```text
+./data
+./data/module
+```
+
+![](../../imgs/install/auto_create_data_dir.jpg)
+
+Nakama支持使用Go、Js、Lua来编写服务器逻辑，编写的Lua脚本放在`module`目录就会被加载运行，具体下一章介绍。
