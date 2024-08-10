@@ -105,5 +105,6 @@ Nakama提供了一个命令来自动创建数据库和表格。
 ![](../../imgs/install/nakama_web_console.jpg)
 
 
+### 6. 停止Nakama服务器
 
-
+直接在PowerShell控制台`ctrl+c`就行。
