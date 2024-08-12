@@ -141,7 +141,7 @@ nk.register_rpc(function(context, payload)
         error({ "guild name is in use", error_codes.ALREADY_EXISTS })
     end
 
-    --注意：因为Nakama LuaRuntime是过程式无状态的，所以传入的数据一定要传出去，让后续的其他逻辑使用。
+    --返回结果
     return nk.json_encode({ success = true })
 end, "lua_create_guild")
 

@@ -13,7 +13,7 @@
 
 ![](../../imgs/console/api_explorer_guide.jpg)
 
-`API Explorer`主要用来调用执行Nakama内置的一些API，无法调用自定义的RPC。
+`API Explorer`用来调用执行Nakama内置的一些API，以及自定义的RPC。
 
 下面是一个通过`GetAccount`这个API，来查询账号信息的例子。
 
