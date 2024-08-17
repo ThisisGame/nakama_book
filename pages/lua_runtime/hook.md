@@ -1,10 +1,14 @@
 ## Hook
 
+    官方文档：https://heroiclabs.com/docs/nakama/server-framework/introduction/hooks/
+
 Nakama服务器实现了局外游戏服务器的大部分功能，所以大部分时候，我们都是调用Nakama提供的内置API。
 
 那如何实现一些自定义的功能呢，比如在聊天时，对聊天内容进行关键词检测？
 
 这就用到Hook接口了，即Nakama提供了一个接口，在内置API执行之前和之后，可以插入自定义的逻辑。
+
+    所有可以Hook的接口列表：https://heroiclabs.com/docs/nakama/server-framework/introduction/hooks/#message-names
 
 在前面介绍`API Explorer`时，在`API Explorer`中调用执行了`GetAccount`这个API，来查询账号信息。
 
