@@ -65,7 +65,9 @@ public class ThirdPersonDemoServerTarget : TargetRules
 
 然后重新生成Sln。
 
-### 4. 编译Linux DS
+### 4. 测试编译Linux DS
+
+测试编译Linux DS，看看交叉编译工具链是否安装OK。
 
 选择编译目标为Linux Server。
 
@@ -84,7 +86,9 @@ public class ThirdPersonDemoServerTarget : TargetRules
 ![](../../imgs/ue/build_linux_ds/build_linux_ds_success.jpg)
 
 
+### 5. 打包Linux DS及资源
 
+![](../../imgs/ue/build_linux_ds/build_linux_ds_profile_done.jpg)
 
 
 
