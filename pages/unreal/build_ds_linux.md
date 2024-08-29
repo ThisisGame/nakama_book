@@ -88,7 +88,43 @@ public class ThirdPersonDemoServerTarget : TargetRules
 
 ### 5. 打包Linux DS及资源
 
+先新增一个打包配置。
+
+点击菜单`window->projectlauncher`打开打包配置窗口。
+
+![](../../imgs/ue/build_linux_ds/select_project_launcher.jpg)
+
+点击加号新增一个配置。
+
+![](../../imgs/ue/build_linux_ds/open_project_launcher.jpg)
+
+设置Cook Linux Server。
+
+![](../../imgs/ue/build_linux_ds/cook_linux_server.jpg)
+
+设置打包到本地。
+
+![](../../imgs/ue/build_linux_ds/set_package_to_local.jpg)
+
+然后返回配置列表。
+
+![](../../imgs/ue/build_linux_ds/back_to_launcher_list.jpg)
+
+点击打包按钮开始打包。
+
+![](../../imgs/ue/build_linux_ds/launch_linux_server_profile.jpg)
+
+打包中。。。
+
+![](../../imgs/ue/build_linux_ds/building_linux_server.jpg)
+
+打包成功了。
+
 ![](../../imgs/ue/build_linux_ds/build_linux_ds_profile_done.jpg)
+
+根据打包窗口的日志，找到打包出来的Linux Server存放目录。
+
+![](../../imgs/ue/build_linux_ds/package_linux_ds_dir.jpg)
 
 ### 6. 在WSL中运行DS
 
