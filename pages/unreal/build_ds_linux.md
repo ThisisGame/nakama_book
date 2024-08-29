@@ -128,7 +128,7 @@ public class ThirdPersonDemoServerTarget : TargetRules
 
 ### 6. 在WSL中运行DS
 
-先在WSL中用`ifconfig`命令查看IP地址，然后执行`ThirdPersonDemoServer.sh`启动DS。
+先在WSL中用`ifconfig`命令查看IP地址，然后执行`sh ThirdPersonDemoServer.sh`启动DS。
 
 ![](../../imgs/ue/build_linux_ds/wsl2_run_ds_sh.jpg)
 
