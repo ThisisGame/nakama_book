@@ -16,6 +16,24 @@ function M.match_init(context, initial_state)
 	return state, tick_rate, label
 end
 
+--- 当客户端调用match_join时调用，可以控制玩家是否能加入对局，返回true表示允许加入，返回false表示不允许加入。
+---@param context table 表示有关匹配项和服务器的信息，以供参考。
+---@param dispatcher table 提供一些函数，例如dispatcher.broadcast_message(给玩家发消息)
+---@param tick number 当前帧数
+---@param state table 对局的成员变量，它在对局的每个函数中作为参数传递，如果是nil则结束比赛。
+---@param presence table 包含加入对局的玩家信息
+---@param metadata table 客户端请求加入对局的附加信息
+function M.match_join_attempt(context, dispatcher, tick, state, presence, metadata)
+	-- Presence format:
+	-- {
+	--   user_id = "user unique ID",
+	--   session_id = "session ID of the user's current connection",
+	--   username = "user's unique username",
+	--   node = "name of the Nakama node the user is connected to"
+	-- }
+	return state, true
+end
+
 function M.match_join(context, dispatcher, tick, state, presences)
 	for _, presence in ipairs(presences) do
 		state.presences[presence.session_id] = presence
