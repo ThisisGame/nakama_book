@@ -1,3 +1,7 @@
+--导入nakama库
+local nk = require("nakama")
+nk.logger_info("Lobby module loaded")
+
 local M = {}
 
 --- 当nk.match_create函数创建匹配项时调用，并设置匹配项的初始状态，仅在比赛开始时调用一次。
@@ -5,6 +9,8 @@ local M = {}
 ---@param initial_state table 可以是匹配的用户或您希望传递到此函数的任何其他数据。
 ---@return table, number, string
 function M.match_init(context, initial_state)
+	nk.logger_info("Match init")
+
 	--state创建对局的成员变量，它在对局的每个函数中作为参数传递，如果是nil则结束比赛。
 	local state = {
 		presences = {},
@@ -24,6 +30,7 @@ end
 ---@param presence table 包含加入对局的玩家信息
 ---@param metadata table 客户端请求加入对局的附加信息
 function M.match_join_attempt(context, dispatcher, tick, state, presence, metadata)
+	nk.logger_info("Match join attempt, user_id: " .. presence.user_id)
 	-- Presence format:
 	-- {
 	--   user_id = "user unique ID",
@@ -35,6 +42,8 @@ function M.match_join_attempt(context, dispatcher, tick, state, presence, metada
 end
 
 function M.match_join(context, dispatcher, tick, state, presences)
+	nk.logger_info("Match join")
+
 	for _, presence in ipairs(presences) do
 		state.presences[presence.session_id] = presence
 	end
@@ -43,6 +52,8 @@ function M.match_join(context, dispatcher, tick, state, presences)
 end
 
 function M.match_leave(context, dispatcher, tick, state, presences)
+	nk.logger_info("Match leave")
+
 	for _, presence in ipairs(presences) do
 		state.presences[presence.session_id] = nil
 	end
@@ -51,11 +62,13 @@ function M.match_leave(context, dispatcher, tick, state, presences)
 end
 
 function M.match_loop(context, dispatcher, tick, state, messages)
-  -- Get the count of presences in the match
-  local totalPresences = 0
-  for k, v in pairs(state.presences) do
-    totalPresences = totalPresences + 1
-  end
+	nk.logger_info("Match loop, tick: " .. tick)
+
+	-- Get the count of presences in the match
+	local totalPresences = 0
+	for k, v in pairs(state.presences) do
+		totalPresences = totalPresences + 1
+	end
 
 	-- If we have no presences in the match according to the match state, increment the empty ticks count
 	if totalPresences == 0 then
