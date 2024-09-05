@@ -14,3 +14,13 @@
 
 ### 2. Plugin接口请求RPC
 
+Nakama Plugin提供了两种接口来请求RPC，一种是传递Session，另一个是传递HttpKey。
+
+这两个接口都是RealTime Client提供的。
+
+传递Session的接口用来调用玩家相关的RPC，例如更新账号数据。
+
+传递HttpKey的接口用来调用服务器框架相关的，例如获取服务器状态。
+
+
+
