@@ -8,5 +8,9 @@
 
 ### 1. HTTP请求RPC
 
+在luaruntime介绍三方服务器与Nakama交互时，就介绍了如何同通过HTTP执行Nakama RPC函数，当时是通过控制台或者Postman，现在换成在UE代码来发送Post请求即可。
+
+
+
 ### 2. Plugin接口请求RPC
 
