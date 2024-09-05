@@ -107,3 +107,12 @@ captainchen@DESKTOP-GS0D9IU:/mnt/g/book/nakama_book/files/ue$
 现代Linux系统实现了COW技术，当子进程没有对data执行写操作是，访问的data其实就是父进程的同一块物理内存。
 
 当子进程对data进行写操作时，才会复制一块物理内存，但是仍然保持原来的地址。
+
+### 2. Fork DS
+
+Fork DS的目的是为了节省启动时间和内存，那么，Fork的时机，就得在DS加载完后，GameMode的BeginPlay是一个不错的时机。
+
+在GameMode的BeginPlay里，向Nakama发出Http请求，将自己注册为DSLaunncher。
+
+收到注册成功后的结果后，就开始每秒定时请求Nakama服务器获取对局任务，如果Nakama返回了对局任务，就执行Fork操作。
+
