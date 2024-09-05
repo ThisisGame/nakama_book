@@ -14,6 +14,11 @@ function rpc_echo(context, payload)
     --打印payload类型(string)
     nk.logger_info(type(payload))
 
+    --遍历payload
+    for k, v in pairs(nk.json_decode(payload)) do
+        nk.logger_info(("key: %q value: %q"):format(k, v))
+    end
+
     --打印payload
     nk.logger_info(("payload: %q"):format(payload))
 
