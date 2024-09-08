@@ -49,7 +49,7 @@ Nakama的存储引擎是为了用户设计的，所以每一行数据都必须�
 客户端在写入一个Object时，无需设置Object的UserId字段，它就只能归属于当前用户，并且默认的`Permissions`也限定于当前用户读写。
 
 ```c++
-//写入数据
+//设置今天的心情(feeling)为不开心
 auto successCallback = [](const NStorageObjectAcks& acks)
 {
     std::cout << "Successfully stored objects " << acks.size() << std::endl;
@@ -58,9 +58,28 @@ auto successCallback = [](const NStorageObjectAcks& acks)
 std::vector<NStorageObjectWrite> objects;
 
 NStorageObjectWrite savesObject;
-savesObject.collection = "player_level_rewards_status";
-savesObject.key = "5";
-savesObject.value = "{\"get\":1,\"timestamp\":1725632295}";
+savesObject.collection = "player_public_info";
+savesObject.key = "feeling";
+savesObject.value = "sad";
+objects.push_back(savesObject);
+
+client->writeStorageObjects(session, objects, successCallback);
+```
+
+```c++
+//设置今天的心情(feeling)为不开心，所有人可见
+auto successCallback = [](const NStorageObjectAcks& acks)
+{
+    std::cout << "Successfully stored objects " << acks.size() << std::endl;
+};
+
+std::vector<NStorageObjectWrite> objects;
+
+NStorageObjectWrite savesObject;
+savesObject.collection = "player_public_info";
+savesObject.key = "feeling";
+savesObject.value = "sad";
+savesObject.permissionRead = NStoragePermissionRead::PUBLIC_READ;//设置为所有人可见，其他玩家客户端也可以调用readStorageObjects来读取。
 objects.push_back(savesObject);
 
 client->writeStorageObjects(session, objects, successCallback);
@@ -97,6 +116,10 @@ enum class NStoragePermissionRead
 };
 ```
 
+例如玩家设置了今天的心情，这个数据可以公开。
+
+
+
 而写权限，并不能公开，一条数据由你创建，就只能你写入，不能给其他玩家修改。
 
 ```c++
@@ -111,12 +134,13 @@ enum class NStoragePermissionWrite
 唯一例外的是服务器，在服务器脚本里可以读写任何用户创建的数据，服务器脚本拥有最高权限。
 
 ```lua
+--读取指定玩家的等级奖励领取状态
+
 local user_id = "4ec4f126-3f9d-11e7-84ef-b7c182b36521"
 
 local object_ids = {
-  { collection = "player_level_rewards_status", key = "5", user_id = user_id },
-  { collection = "save", key = "save2", user_id = user_id },
-  { collection = "save", key = "save3", user_id = user_id }
+  { collection = "player_level_rewards_status", key = "5", user_id = user_id },--读取等级5的奖励领取状态
+  { collection = "player_level_rewards_status", key = "10", user_id = user_id }--读取等级10的奖励领取状态
 }
 
 local objects = nk.storage_read(object_ids)
@@ -125,4 +149,17 @@ for _, r in ipairs(objects) do
   local message = string.format("read: %q, write: %q, value: %q", r.permission_read, r.permission_write, r.value)
   nk.logger_info(message)
 end
+```
+
+```lua
+--更新指定玩家的等级奖励领取状态
+
+local user_id = "4ec4f126-3f9d-11e7-84ef-b7c182b36521"
+
+local new_objects = {
+  { collection = "player_level_rewards_status", key = "5", user_id = user_id, value = "{\"get\":1,\"timestamp\":1725632295}" },--更新
+  { collection = "player_level_rewards_status", key = "10", user_id = user_id, value = "{\"get\":0}", permission_read = 1, permission_write = 1 }--更新并指定权限
+}
+
+nk.storage_write(new_objects)
 ```
