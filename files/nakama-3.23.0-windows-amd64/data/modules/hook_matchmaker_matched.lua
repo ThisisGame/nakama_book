@@ -1,6 +1,12 @@
 --导入nakama库
 local nk = require("nakama")
 
+--等待指派给DS的对局Collection
+local MATCHES_WAIT_DS_COLLECTION = "matches_wait_ds"
+
+--系统用户ID
+local SYSTEM_USER_ID = "00000000-0000-0000-0000-000000000000"
+
 local function matchmaker_matched(context, matched_users)
     nk.logger_info("Matchmaker matched users: " .. #matched_users)
 
@@ -22,18 +28,32 @@ local function matchmaker_matched(context, matched_users)
         return nil
     end
 
-    -- if matched_users[1].properties["mode"] ~= "matchmaker" then
-    --     nk.logger_error("Matchmaker matched user 1 mode is not matchmaker, mode: " .. tostring(matched_users[1].properties["mode"]))
-    --     return nil
-    -- end
-
-    -- if matched_users[2].properties["mode"] ~= "matchmaker" then
-    --     nk.logger_error("Matchmaker matched user 2 mode is not matchmaker, mode: " .. tostring(matched_users[2].properties["mode"]))
-    --     return nil
-    -- end
-
     --创建一场匹配赛，lobby 是lua脚本名字
-    return nk.match_create("lobby", {debug = true, expected_users = matched_users})
+    local match_id,optional_error=nk.match_create("lobby", {debug = true, expected_users = matched_users})
+    if optional_error then
+        nk.logger_error("Failed to create match: " .. optional_error)
+        return nil
+    end
+    nk.logger_info("Match created with ID: " .. match_id)
+
+    --存储到对局列表Collection中
+    local new_objects = {{
+        collection = MATCHES_WAIT_DS_COLLECTION,
+        key = match_id,
+        user_id = SYSTEM_USER_ID,
+        value = nk.json_encode({
+            match_id = match_id,
+            create_time = os.time()
+        })
+    }}
+    local versions,optional_error=nk.storage_write(new_objects)
+    if optional_error then
+        nk.logger_error("Failed to write storage: " .. optional_error)
+        return nil
+    end
+    nk.logger_info("Match stored in collection: " .. match_id)
+
+    return match_id,optional_error
 end
 
 -- 注册MatchMaker匹配成功后的处理
