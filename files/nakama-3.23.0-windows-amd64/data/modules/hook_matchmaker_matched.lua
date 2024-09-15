@@ -29,10 +29,10 @@ local function matchmaker_matched(context, matched_users)
     end
 
     --创建一场匹配赛，lobby 是lua脚本名字
-    local match_id,optional_error=nk.match_create("lobby", {debug = true, expected_users = matched_users})
-    if optional_error then
-        nk.logger_error("Failed to create match: " .. optional_error)
-        return nil
+    local match_id,optional_error_match_create=nk.match_create("lobby", {debug = true, expected_users = matched_users})
+    if optional_error_match_create then
+        nk.logger_error("Failed to create match: " .. optional_error_match_create)
+        return match_id,optional_error_match_create
     end
     nk.logger_info("Match created with ID: " .. match_id)
 
@@ -43,6 +43,7 @@ local function matchmaker_matched(context, matched_users)
         user_id = SYSTEM_USER_ID,
         value = nk.json_encode({
             match_id = match_id,
+            matched_users = matched_users,
             create_time = os.time()
         })
     }}
@@ -53,7 +54,7 @@ local function matchmaker_matched(context, matched_users)
     end
     nk.logger_info("Match stored in collection: " .. match_id)
 
-    return match_id,optional_error
+    return match_id,optional_error_match_create
 end
 
 -- 注册MatchMaker匹配成功后的处理

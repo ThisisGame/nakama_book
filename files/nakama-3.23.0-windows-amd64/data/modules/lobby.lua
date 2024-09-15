@@ -2,6 +2,9 @@
 local nk = require("nakama")
 nk.logger_info("Lobby module loaded")
 
+--已经分配DS
+local OPCODE_DS_ASSIGNED = 1
+
 local M = {}
 
 --- 当nk.match_create函数创建匹配项时调用，并设置匹配项的初始状态，仅在比赛开始时调用一次。
@@ -81,4 +84,28 @@ function M.match_loop(context, dispatcher, tick, state, messages)
 	end
 
 	return state
+end
+
+--接收到外部信号，例如分配了DS，通知所有玩家连接DS
+function M.match_signal(context, dispatcher, tick, state, data)
+	nk.logger_info("Match signal, data: " .. data)
+
+	--解析data
+	local data_decode = nk.json_decode(data)
+
+	if OPCODE_DS_ASSIGNED == data_decode.op_code then
+		local opcode = OPCODE_DS_ASSIGNED
+		local message = { ["message"] = "ds_assigned" , ["ds_url"] = data_decode.ds_url }
+		local encoded = nk.json_encode(message)
+		local presences = nil -- send to all.
+		local sender = nil -- used if a message should come from a specific user.
+		dispatcher.broadcast_message(opcode, encoded, presences, sender)
+	end
+end
+
+function M.match_terminate(context, dispatcher, tick, state, grace_seconds)
+	nk.logger_info("Match terminate")
+
+	-- Grace period to allow clients to receive the match termination signal
+	nk.match_terminate(grace_seconds)
 end
