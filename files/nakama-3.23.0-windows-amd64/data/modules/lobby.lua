@@ -109,3 +109,5 @@ function M.match_terminate(context, dispatcher, tick, state, grace_seconds)
 	-- Grace period to allow clients to receive the match termination signal
 	nk.match_terminate(grace_seconds)
 end
+
+return M

@@ -10,22 +10,22 @@ local SYSTEM_USER_ID = "00000000-0000-0000-0000-000000000000"
 local function matchmaker_matched(context, matched_users)
     nk.logger_info("Matchmaker matched users: " .. #matched_users)
 
-    --打印匹配成功的用户信息
-    for _, m in ipairs(matched_users) do
-        nk.logger_info("user_id:" .. m.presence["user_id"])
-        nk.logger_info("session_id:" .. m.presence["session_id"])
-        nk.logger_info("username:" .. m.presence["username"])
-        nk.logger_info("node:" .. m.presence["node"])
+    --序列化matched_users为json字符串
+    local matched_users_json = nk.json_encode(matched_users)
+    nk.logger_info("Matchmaker matched users json: " .. matched_users_json)
 
-        for _, p in ipairs(m.properties) do
-            nk.logger_info("propertie:" .. p)
-        end
+    --匹配成功的用户数量检查。如果想让1个人也可以进匹配，那么这里下限为1，上限为自定义人数。
+    if #matched_users ==0 then
+        nk.logger_error("Matchmaker matched users count is 0")
+        return nil
     end
 
-    --匹配成功的用户数量不是2个，返回nil。如果想让1个人也可以进匹配，那么这里下限为1，上限为自定义人数。
-    if #matched_users ~= 2 then
-        nk.logger_error("Matchmaker matched users count is not 2")
-        return nil
+    --判断是否本地DS，本地DS只许一个人开局
+    if matched_users[1].launch_local_dev_ds then
+        if #matched_users > 1 then
+            nk.logger_error("Matchmaker matched users count is more than 1, but launch_local_dev_ds is true")
+            return nil
+        end
     end
 
     --创建一场匹配赛，lobby 是lua脚本名字
@@ -41,11 +41,12 @@ local function matchmaker_matched(context, matched_users)
         collection = MATCHES_WAIT_DS_COLLECTION,
         key = match_id,
         user_id = SYSTEM_USER_ID,
-        value = nk.json_encode({
+        value = {
             match_id = match_id,
-            matched_users = matched_users,
-            create_time = os.time()
-        })
+            create_time = os.time(),
+            launch_local_dev_ds = matched_users[1].launch_local_dev_ds,
+            matched_users = matched_users
+        }
     }}
     local versions,optional_error=nk.storage_write(new_objects)
     if optional_error then

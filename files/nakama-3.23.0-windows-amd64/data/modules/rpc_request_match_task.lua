@@ -77,12 +77,12 @@ function request_match_task(context, payload)
         collection = MATCHES_IN_DS_COLLECTION,
         key = object.key,
         user_id = SYSTEM_USER_ID,
-        value = nk.json_encode({
+        value = {
             match_id = object.value.match_id,
             matched_users = object.value.matched_users,
             ds_url = ds_url,
             create_time = os.time()
-        })
+        }
     }}
     local versions,optional_error_storage_write = nk.storage_write(new_objects)
     if optional_error_storage_write then
