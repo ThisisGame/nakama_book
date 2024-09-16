@@ -90,6 +90,29 @@ local function matchmaker_matched(context, matched_users)
 end
 ```
 
+---------------------
 
+Nakama内部限制了最小匹配人数是2
 
+Invalid minimum count, must be >=2
 
+在  https://github.com/heroiclabs/nakama/blob/5d71edf31f894f48803f5b30a0eb6c229beb8964/server/pipeline_matchmaker.go#L31
+
+```go
+func (p *Pipeline) matchmakerAdd(logger *zap.Logger, session Session, envelope *rtapi.Envelope) (bool, *rtapi.Envelope) {
+	incoming := envelope.GetMatchmakerAdd()
+
+	// Minimum count.
+	minCount := int(incoming.MinCount)
+	if minCount < 2 {
+		_ = session.Send(&rtapi.Envelope{Cid: envelope.Cid, Message: &rtapi.Envelope_Error{Error: &rtapi.Error{
+			Code:    int32(rtapi.Error_BAD_INPUT),
+			Message: "Invalid minimum count, must be >= 2",
+		}}}, true)
+		return false, nil
+	}
+```
+
+确实是写死了。
+
+可能得改改代码，或者放弃MatchMaker支持单人本地DS
