@@ -36,6 +36,14 @@ local function matchmaker_matched(context, matched_users)
     end
     nk.logger_info("Match created with ID: " .. match_id)
 
+    --查找这场匹配赛
+    local match,optional_error_match_get=nk.match_get(match_id)
+    if optional_error_match_get then
+        nk.logger_error("Failed to get match: " .. optional_error_match_get)
+        return nil
+    end
+    nk.logger_info("Match retrieved: " .. nk.json_encode(match))
+
     --存储到对局列表Collection中
     local new_objects = {{
         collection = MATCHES_WAIT_DS_COLLECTION,

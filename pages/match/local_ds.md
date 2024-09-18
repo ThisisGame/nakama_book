@@ -116,3 +116,74 @@ func (p *Pipeline) matchmakerAdd(logger *zap.Logger, session Session, envelope *
 确实是写死了。
 
 可能得改改代码，或者放弃MatchMaker支持单人本地DS
+
+---
+
+Client Relayed模式里的客户端直接请求创建对局，
+
+```c++
+void UNakamaRealtimeClient::CreateMatch(
+	TFunction<void(const FNakamaMatch& Match)> SuccessCallback,
+	TFunction<void(const FNakamaRtError& Error)> ErrorCallback)
+{
+	SendMessageWithEnvelope(TEXT("match_create"), {},
+		[SuccessCallback](const FNakamaRealtimeEnvelope& Envelope)
+		{
+			if (SuccessCallback)
+			{
+				FNakamaMatch Match = FNakamaMatch(Envelope.Payload);
+				SuccessCallback(Match);
+			}
+		},
+		[ErrorCallback](const FNakamaRtError& Error)
+		{
+			if (ErrorCallback)
+			{
+				ErrorCallback(Error);
+			}
+		}
+	);
+}
+```
+
+原来就是直接跳过了匹配，创建了对局……，直接执行了`match_create`。
+
+而普通的匹配是先匹配成功后，然后在`files\nakama-3.23.0-windows-amd64\data\modules\hook_matchmaker_matched.lua` 匹配成功的Hook中调用了`match_create`。
+
+```lua
+--创建一场匹配赛，lobby 是lua脚本名字
+local match_id,optional_error_match_create=nk.match_create("lobby", {debug = true, expected_users = matched_users})
+if optional_error_match_create then
+    nk.logger_error("Failed to create match: " .. optional_error_match_create)
+    return match_id,optional_error_match_create
+end
+nk.logger_info("Match created with ID: " .. match_id)
+```
+
+那么就用这个来做本地DS，客户端成功后直接拉起，不在服务器做存储，但是什么时候去连接DS呢？
+
+看下有没有register来hook
+
+    https://heroiclabs.com/docs/nakama/server-framework/introduction/hooks/#message-names
+
+```
+MatchCreate	
+
+A client to server request to create a realtime match.
+```
+
+可以使用这个。可以添加before和after，这里就用after来将这个对局记录到StorageEngine中。
+
+也测试一下这个after，对在`files\nakama-3.23.0-windows-amd64\data\modules\hook_matchmaker_matched.lua` 匹配成功的Hook中调用的`match_create`，是否生效，如果生效那就很方便了，做统一处理存储到StorageEngine。
+
+获取对局信息 https://heroiclabs.com/docs/nakama/server-framework/lua-runtime/function-reference/#match_get
+
+
+看下match_get会不会返回dispatcher
+
+```
+{"level":"info","ts":"2024-09-18T20:46:56.845+0800","caller":"server/runtime_lua_nakama.go:2329","msg":"Match retrieved: {\"authoritative\":true,\"handler_name\":\"lobby\",\"label\":\"\",\"match_id\":\"042bfc8d-610c-4b94-b533-ef18675ef82b.nakama\",\"size\":0,\"tick_rate\":1}","runtime":"lua","mode":"matchmaker"}
+```
+
+不太行，返回的是基础信息？
+
