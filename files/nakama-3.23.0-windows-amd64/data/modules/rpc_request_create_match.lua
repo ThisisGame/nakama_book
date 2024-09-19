@@ -1,25 +1,15 @@
 --导入nakama库
 local nk = require("nakama")
 
---等待指派给DS的对局Collection
-local MATCHES_WAIT_DS_COLLECTION = "matches_wait_ds"
-
---已经指派给DS的对局Collection
-local MATCHES_IN_DS_COLLECTION = "matches_in_ds"
-
---已经分配DS
-local OPCODE_DS_ASSIGNED = 1
-
-
---系统用户ID
-local SYSTEM_USER_ID = "00000000-0000-0000-0000-000000000000"
+--等待指派给DS的玩家创建的对局Collection
+local USER_CREATE_MATCHES_WAIT_DS_COLLECTION = "user_create_matches_wait_ds"
 
 --- 请求创建对局
 ---@param context table 请求的上下文
 ---@param payload string 请求的数据，是json，可以用nk.json_decode(payload)解析
 ---@return string 返回json格式的数据，存着MatchID
 function request_create_match(context, payload)
-    nk.logger_info("request_create_match is called")
+    nk.logger_info("request_create_match is called, user_id: " .. tostring(context.user_id))
 
     --打印context
     nk.logger_info(nk.json_encode(context))
@@ -42,19 +32,11 @@ function request_create_match(context, payload)
     end
     nk.logger_info("Match created with ID: " .. match_id)
 
-    --查找这场匹配赛
-    local match,optional_error_match_get=nk.match_get(match_id)
-    if optional_error_match_get then
-        nk.logger_error("Failed to get match: " .. optional_error_match_get)
-        return nk.json_encode({ success = false , error = optional_error_match_get })
-    end
-    nk.logger_info("Match retrieved: " .. nk.json_encode(match))
-
-    --存储到对局列表Collection中
+    --存储到玩家创建的对局列表Collection中
     local new_objects = {{
-        collection = MATCHES_WAIT_DS_COLLECTION,
+        collection = USER_CREATE_MATCHES_WAIT_DS_COLLECTION,
         key = match_id,
-        user_id = SYSTEM_USER_ID,
+        user_id = context.user_id,--这里的user_id填创建对局的玩家ID
         value = {
             match_id = match_id,
             create_time = os.time(),

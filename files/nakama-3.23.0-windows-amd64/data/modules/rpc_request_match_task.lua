@@ -21,22 +21,11 @@ local SYSTEM_USER_ID = "00000000-0000-0000-0000-000000000000"
 function request_match_task(context, payload)
     nk.logger_info("request_match_task is called")
 
-    --打印context类型(table)
-    nk.logger_info(type(context))
-
-    --打印payload类型(string)
-    nk.logger_info(type(payload))
-
     --打印payload
     nk.logger_info(("payload: %q"):format(payload))
 
     --将payload转为table
     local payload_table = nk.json_decode(payload)
-
-    --遍历payload
-    for k, v in pairs(payload_table) do
-        nk.logger_info(("key: %q value: %q"):format(k, v))
-    end
 
     --从payload取到DS Url
     local ds_url = payload_table.ds_url

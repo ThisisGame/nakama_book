@@ -101,6 +101,8 @@ function M.match_signal(context, dispatcher, tick, state, data)
 		local sender = nil -- used if a message should come from a specific user.
 		dispatcher.broadcast_message(opcode, encoded, presences, sender)
 	end
+
+	return state,"signal received: " .. data
 end
 
 function M.match_terminate(context, dispatcher, tick, state, grace_seconds)
