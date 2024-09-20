@@ -16,13 +16,19 @@ function M.match_init(context, initial_state)
 
 	--state创建对局的成员变量，它在对局的每个函数中作为参数传递，如果是nil则结束比赛。
 	local state = {
+		initial_state = initial_state,
 		presences = {},
 		empty_ticks = 0
 	}
 	local tick_rate = 1 --每秒调用match_loop函数次数，相当于服务器的帧率。
-	local label = "" --比赛的标签，在MatchList中显示时，用于筛选的标签。
 
-	return state, tick_rate, label
+	local label = {
+        local_dev_ds_mode = state.initial_state.local_dev_ds_mode,--是否本地Dev DS模式
+		ds_assigned = false,--是否已经分配DS
+    }
+	local match_label = nk.json_encode(label) --对局的标签，在MatchList中显示时，用于筛选的标签。调用dispatcher.match_label_update("updatedlabel")更新
+
+	return state, tick_rate, match_label
 end
 
 --- 当客户端调用match_join时调用，可以控制玩家是否能加入对局，返回true表示允许加入，返回false表示不允许加入。
@@ -100,6 +106,13 @@ function M.match_signal(context, dispatcher, tick, state, data)
 		local presences = nil -- send to all.
 		local sender = nil -- used if a message should come from a specific user.
 		dispatcher.broadcast_message(opcode, encoded, presences, sender)
+
+		--更新对局的标签，已经分配DS。
+		local label = {
+			local_dev_ds_mode = state.initial_state.local_dev_ds_mode,--是否本地Dev DS模式
+			ds_assigned = true,
+		}
+		local match_label = nk.json_encode(label)
 	end
 
 	return state,"signal received: " .. data

@@ -18,7 +18,7 @@ function client_request_user_create_match(context, payload)
     local payload_table = nk.json_decode(payload)
 
     --创建一场匹配赛，lobby 是lua脚本名字
-    local match_id,optional_error_match_create=nk.match_create("lobby", {debug = true})
+    local match_id,optional_error_match_create=nk.match_create("lobby", {debug = true , local_dev_ds_mode = payload_table.local_dev_ds_mode})
     if optional_error_match_create then
         nk.logger_error("Failed to create match: " .. optional_error_match_create)
         return nk.json_encode({ success = false , error = optional_error_match_create })
