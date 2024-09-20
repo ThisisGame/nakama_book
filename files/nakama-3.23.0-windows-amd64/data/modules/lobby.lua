@@ -23,8 +23,8 @@ function M.match_init(context, initial_state)
 	local tick_rate = 1 --每秒调用match_loop函数次数，相当于服务器的帧率。
 
 	local label = {
-        local_dev_ds_mode = state.initial_state.local_dev_ds_mode,--是否本地Dev DS模式
-		ds_assigned = false,--是否已经分配DS
+        local_dev_ds_mode = tostring(state.initial_state.local_dev_ds_mode),--是否本地Dev DS模式
+		ds_assigned = tostring(false),--是否已经分配DS
     }
 	local match_label = nk.json_encode(label) --对局的标签，在MatchList中显示时，用于筛选的标签。调用dispatcher.match_label_update("updatedlabel")更新
 
@@ -73,19 +73,19 @@ end
 function M.match_loop(context, dispatcher, tick, state, messages)
 	nk.logger_info("Match loop, tick: " .. tick)
 
-	-- Get the count of presences in the match
+	-- 计算当前对局中的玩家数量
 	local totalPresences = 0
 	for k, v in pairs(state.presences) do
 		totalPresences = totalPresences + 1
 	end
 
-	-- If we have no presences in the match according to the match state, increment the empty ticks count
+	--如果没有人加入，记录空帧数
 	if totalPresences == 0 then
 		state.empty_ticks = state.empty_ticks + 1
 	end
 
-	-- If the match has been empty for more than 100 ticks, end the match by returning nil
-	if state.empty_ticks > 100 then
+	-- 等了600帧，还没有人加入，结束对局，因为是1秒调用一次，所以是10分钟。
+	if state.empty_ticks > 600 then
 		return nil
 	end
 
@@ -109,10 +109,11 @@ function M.match_signal(context, dispatcher, tick, state, data)
 
 		--更新对局的标签，已经分配DS。
 		local label = {
-			local_dev_ds_mode = state.initial_state.local_dev_ds_mode,--是否本地Dev DS模式
-			ds_assigned = true,
+			local_dev_ds_mode = tostring(state.initial_state.local_dev_ds_mode),--是否本地Dev DS模式
+			ds_assigned = tostring(true),
 		}
 		local match_label = nk.json_encode(label)
+		dispatcher.match_label_update(match_label)
 	end
 
 	return state,"signal received: " .. data

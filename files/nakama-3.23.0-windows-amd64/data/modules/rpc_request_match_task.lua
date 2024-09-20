@@ -1,6 +1,9 @@
 --导入nakama库
 local nk = require("nakama")
 
+--已经分配DS
+local OPCODE_DS_ASSIGNED = 1
+
 --- 请求对局任务
 ---@param context table 请求的上下文
 ---@param payload string 请求的数据，是json，可以用nk.json_decode(payload)解析
@@ -29,7 +32,7 @@ function request_match_task(context, payload)
     local label = nil
     local min_size = 0
     local max_size = 4
-    local filter = "+label.ds_assigned:false"
+    local filter = "label.ds_assigned:false"
     local matches = nk.match_list(limit, isAuthoritative, label, min_size, max_size,filter)
 
     for _, match in ipairs(matches) do

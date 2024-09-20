@@ -21,8 +21,16 @@ local function matchmaker_matched(context, matched_users)
     else
         nk.logger_info("Match created with ID: " .. match_id)
     end
-    
-    return match_id,optional_error_match_create
+
+    --查找MatchID对应的对局
+    local match,optional_error_match_get=nk.match_get(match_id)
+    if optional_error_match_get then
+        nk.logger_error("Failed to get match: " .. optional_error_match_get)
+    else
+        nk.logger_info("Match retrieved: " .. nk.json_encode(match))
+    end
+
+    return match_id --这里注意只能返回match_id一个值，如果返回多个值，会导致客户端解析到后面的值作为match_id
 end
 
 -- 注册MatchMaker匹配成功后的处理
