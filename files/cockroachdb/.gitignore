@@ -1,0 +1,5 @@
+/cockroach-data-*
+/cockroach-v*
+cockroach.exe
+cockroach-v*.zip
+*.log
