@@ -26,6 +26,10 @@ Nakama实验性支持PostgreSQL数据库，正式环境仅支持CockroachDB数�
 
 在Windows平台CockroachDB仅作为开发使用，正式环境需要在Linux平台上部署。
 
+需要注意的是，从`v23`开始，CockroachDB需要企业授权，程序内置监控，没有授权码会限制流量，可以每年到官网申请免费授权。
+
+本文使用`v22`版本进行学习开发，旧版本免费，但官方不再维护。
+
 下面分别介绍两种数据库的使用方式。
 
 ### 2. 使用PostgreSQL
@@ -114,11 +118,27 @@ Nakama提供了一个命令来自动创建数据库和表格。
 
 打开PowerShell，切换到目录`nakama_book\files\cockroachdb`,执行`./start-windows-cluster.ps1`启动3个节点的集群。
 
-#### 3.3. 启动服务器
+![](../../imgs/install/start-windows-cluster.png)
 
-执行批处理()启动服务器：
+#### 3.3. 同步数据库
 
-`./nakama.exe --database.address postgres:password@127.0.0.1:5432`
+现在刚安装好CockroachDB，需要往CockroachDB里创建一些数据库和表格才行。
+
+Nakama提供了一个命令来自动创建数据库和表格。
+
+在上面解压的PowerShell里继续执行命令:
+
+`./nakama.exe migrate up`
+
+![](../../imgs/install/migrate_sql.jpg)
+
+当看到最后输出`Successfully applied migration`时，说明数据库同步成功了。
+
+因为CockroachDB是Nakama默认使用的，所以它的命令会比PostgreSQL的命令简单很多。
+
+#### 3.4. 启动服务器
+
+执行批处理(run_nakama_cockroachdb.bat)启动服务器：
 
 ![](../../imgs/install/startup_done.jpg)
 
@@ -129,7 +149,7 @@ Nakama提供了一个命令来自动创建数据库和表格。
 ![](../../imgs/install/firewall.jpg)
 
 
-### 5. 使用Nakama后台
+### 4. 使用Nakama后台
 
 浏览器打开 `http://127.0.0.1:7351/` 访问Nakama后台。
 
@@ -142,11 +162,11 @@ Nakama提供了一个命令来自动创建数据库和表格。
 ![](../../imgs/install/nakama_web_console.jpg)
 
 
-### 6. 停止Nakama服务器
+### 5. 停止Nakama服务器
 
 直接在PowerShell控制台`ctrl+c`就行。
 
-### 7. 自动创建了data目录
+### 6. 自动创建了data目录
 
 运行Nakama后，在文件夹里自动创建了下面的空目录结构。
 
