@@ -2,7 +2,35 @@
 
 参考官方文档：`https://heroiclabs.com/docs/nakama/getting-started/install/windows/`
 
-### 1. 安装PostgreSQL
+
+### 1. 安装Nakama
+
+下载地址：`https://github.com/heroiclabs/nakama/releases`
+
+选择最新版本下载就行，我此时是 3.23.0。
+
+![](../../imgs/install/download_nakama.jpg)
+
+在文件夹按住shift+鼠标右键，选择`在此处打开PowerShell窗口`。
+
+![](../../imgs/install/open_powershell.jpg)
+
+输入命令`tar -zxvf .\nakama-3.23.0-windows-amd64.tar.gz` 解压。
+
+![](../../imgs/install/tar_unzip.jpg)
+
+
+Nakama实验性支持PostgreSQL数据库，正式环境仅支持CockroachDB数据库(CockroachDB是原生分布式数据库)。
+
+推荐使用CockroachDB数据库。
+
+在Windows平台CockroachDB仅作为开发使用，正式环境需要在Linux平台上部署。
+
+下面分别介绍两种数据库的使用方式。
+
+### 2. 使用PostgreSQL
+
+#### 2.1 安装PostgreSQL
 
 下载地址：`https://www.enterprisedb.com/downloads/postgres-postgresql-downloads`
 
@@ -46,24 +74,7 @@
 
 然后就一直下一步，等待安装完成。
 
-### 2. 安装Nakama
-
-下载地址：`https://github.com/heroiclabs/nakama/releases`
-
-选择最新版本下载就行，我此时是 3.23.0。
-
-![](../../imgs/install/download_nakama.jpg)
-
-在文件夹按住shift+鼠标右键，选择`在此处打开PowerShell窗口`。
-
-![](../../imgs/install/open_powershell.jpg)
-
-输入命令`tar -zxvf .\nakama-3.23.0-windows-amd64.tar.gz` 解压。
-
-![](../../imgs/install/tar_unzip.jpg)
-
-
-### 3. 同步数据库
+#### 2.2. 同步数据库
 
 现在刚安装好，需要往PostgreSql里创建一些数据库和表格才行。
 
@@ -77,9 +88,35 @@ Nakama提供了一个命令来自动创建数据库和表格。
 
 当看到最后输出`Successfully applied migration`时，说明数据库同步成功了。
 
-### 4. 启动服务器
+#### 2.3. 启动服务器
 
-继续执行命令启动服务器：
+使用批处理(run_nakama_postgresql.bat) 或 执行命令启动服务器：
+
+`./nakama.exe --database.address postgres:password@127.0.0.1:5432`
+
+![](../../imgs/install/startup_done.jpg)
+
+看到`Startup done` 说明启动成功了。
+
+中间如果出现了Windows防火墙，记得允许通过。
+
+![](../../imgs/install/firewall.jpg)
+
+### 3. 使用CockroachDB
+
+这里准备了一系列PowerShell脚本，方便后续使用。
+
+#### 3.1 安装CockroachDB
+
+打开PowerShell，切换到目录`nakama_book\files\cockroachdb`,执行`./cockroachdb-download.ps1` 下载并安装CockroachDB。
+
+#### 3.2 启动CockroachDB集群
+
+打开PowerShell，切换到目录`nakama_book\files\cockroachdb`,执行`./start-windows-cluster.ps1`启动3个节点的集群。
+
+#### 3.3. 启动服务器
+
+执行批处理()启动服务器：
 
 `./nakama.exe --database.address postgres:password@127.0.0.1:5432`
 
