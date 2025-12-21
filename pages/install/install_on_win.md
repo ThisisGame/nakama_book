@@ -141,6 +141,76 @@ startrek     # Star Trek数据集
 intro        # 入门示例
 ```
 
+然后可以用命令连接，用标准Sql语法查看DB数据。
+
+```shell
+PS C:\Users\cp\Documents\nakama_book\files\cockroachdb> ./cockroach sql --insecure --host=localhost:26257
+#
+# Welcome to the CockroachDB SQL shell.
+# All statements must be terminated by a semicolon.
+# To exit, type: \q.
+#
+# Server version: CockroachDB CCL v22.2.19 (x86_64-w64-mingw32, built 2024/02/26 16:36:47, go1.19.6) (same version as client)
+# Cluster ID: 788878d0-c91d-499b-8a87-ec95a0c2dfc6
+#
+# Enter \? for a brief introduction.
+#
+root@localhost:26257/defaultdb> show databases;
+  database_name | owner | primary_region | secondary_region | regions | survival_goal
+----------------+-------+----------------+------------------+---------+----------------
+  defaultdb     | root  | NULL           | NULL             | {}      | NULL
+  postgres      | root  | NULL           | NULL             | {}      | NULL
+  system        | node  | NULL           | NULL             | {}      | NULL
+  tpcc          | root  | NULL           | NULL             | {}      | NULL
+(4 rows)
+
+
+Time: 9ms total (execution 8ms / network 1ms)
+
+root@localhost:26257/defaultdb> use tpcc;
+SET
+
+
+Time: 1ms total (execution 1ms / network 0ms)
+
+root@localhost:26257/tpcc> show tables;
+  schema_name | table_name | type  | owner | estimated_row_count | locality
+--------------+------------+-------+-------+---------------------+-----------
+  public      | customer   | table | root  |              300000 | NULL
+  public      | district   | table | root  |                 100 | NULL
+  public      | history    | table | root  |              300000 | NULL
+  public      | item       | table | root  |              100000 | NULL
+  public      | new_order  | table | root  |               90000 | NULL
+  public      | order      | table | root  |              300000 | NULL
+  public      | order_line | table | root  |             2998475 | NULL
+  public      | stock      | table | root  |             1000000 | NULL
+  public      | warehouse  | table | root  |                  10 | NULL
+(9 rows)
+
+
+Time: 46ms total (execution 45ms / network 1ms)
+
+root@localhost:26257/tpcc> select * from customer limit 10;
+  c_id | c_d_id | c_w_id |     c_first      | c_middle |   c_last    |      c_street_1      |     c_street_2     |        c_city        | c_state |   c_zip   |     c_phone      |       c_since       | c_credit | c_credit_lim | c_discount | c_balance | c_ytd_payment | c_payment_cnt | c_delivery_cnt |                                                                                                                                                                                                                                                  c_data
+-------+--------+--------+------------------+----------+-------------+----------------------+--------------------+----------------------+---------+-----------+------------------+---------------------+----------+--------------+------------+-----------+---------------+---------------+----------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     1 |      1 |      0 | eufZbUD5         | OE       | BARBARBAR   | Ly942ccmlM9riA       | SNh8Q9d4DMqzCKV    | DO8vIZK7W8IMbt       | XC      | 777411111 | 3449718085813161 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.2693 |    -10.00 |         10.00 |             1 |              0 | jnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvsizF9Odj29V6ndG88WuUagdt40rwaX250vpPeTRQwarSpuH58twNr0Mptk08sCu91MPNmhu3Xivis
+     2 |      1 |      0 | 99kjAX4eoA5LFp3  | OE       | BARBAROUGHT | HIajDmYec4P3sP       | KkFTva1J19xe9o     | FeUouHeufZbUD5Ly9    | DB      | 743411111 | 4971808581316137 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.0355 |    -10.00 |         10.00 |             1 |              0 | 42ccmlM9riASNh8Q9d4DMqzCKVDO8vIZK7W8IMbtjnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuw
+     3 |      1 |      0 | eUouHeufZbUD5Ly9 | OE       | BARBARABLE  | 42ccmlM9riASNh8Q9d4  | DMqzCKVDO8vI       | ZK7W8IMbtjnD6xR      | LV      | 449711111 | 1808581316137748 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.2514 |    -10.00 |         10.00 |             1 |              0 | RXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvs
+     4 |      1 |      0 | p3HIajDmYec      | OE       | BARBARPRI   | 4P3sPKkFTva1J1       | 9xe9oFeUouHeu      | fZbUD5Ly942ccmlM     | XP      | 774311111 | 4497180858131613 | 2006-01-02 15:04:05 | BC       |     50000.00 |     0.3444 |    -10.00 |         10.00 |             1 |              0 | 9riASNh8Q9d4DMqzCKVDO8vIZK7W8IMbtjnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6
+     5 |      1 |      0 | PKkFTva1J        | OE       | BARBARPRES  | 19xe9oFeUouHeuf      | ZbUD5Ly942ccmlM9ri | ASNh8Q9d4DMq         | VZ      | 449711111 | 1808581316137748 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.3137 |    -10.00 |         10.00 |             1 |              0 | zCKVDO8vIZK7W8IMbtjnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa8
+     6 |      1 |      0 | ZbUD5Ly942c      | OE       | BARBARESE   | cmlM9riASNh8Q9d4DMqz | CKVDO8vIZK7W8IMbtj | nD6xRRXDa43Iz7       | ZX      | 743411111 | 4971808581316137 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.2889 |    -10.00 |         10.00 |             1 |              0 | J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvsizF9Odj29V6ndG88WuUagdt40rwaX250vpPeTRQwarSpuH58twNr0Mptk08sCu91MPNmhu3XivishG74GTnfPOJmgM6APd4Ez71egUWe7
+     7 |      1 |      0 | 19xe9oFeUouHeuf  | OE       | BARBARANTI  | ZbUD5Ly942c          | cmlM9riASNh8Q9     | d4DMqzCKVD           | ID      | 743411111 | 4971808581316137 | 2006-01-02 15:04:05 | BC       |     50000.00 |     0.4761 |    -10.00 |         10.00 |             1 |              0 | O8vIZK7W8IMbtjnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh
+     8 |      1 |      0 | Tva1J19xe9oFeU   | OE       | BARBARCALLY | ouHeufZbUD5Ly942c    | cmlM9riASNh8Q9d4D  | MqzCKVDO8vIZK7W8IMbt | PA      | 718011111 | 8581316137748625 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.2537 |    -10.00 |         10.00 |             1 |              0 | jnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvsizF9Odj29V6ndG88WuUagdt40rwaX250vpPeTRQwarSpuH58twNr0Mptk08sCu91MPNmh
+     9 |      1 |      0 | oA5LFp3HIajDm    | OE       | BARBARATION | Yec4P3sPKkFTva       | 1J19xe9oFeUouH     | eufZbUD5Ly942c       | XC      | 774311111 | 4497180858131613 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.4955 |    -10.00 |         10.00 |             1 |              0 | cmlM9riASNh8Q9d4DMqzCKVDO8vIZK7W8IMbtjnD6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvsizF9Odj29V6ndG88WuUagdt40rwaX250vpPeTRQwarS
+    10 |      1 |      0 | FeUouHeufZ       | OE       | BARBAREING  | bUD5Ly942ccmlM9riASN | h8Q9d4DMqzCKVDO8   | vIZK7W8IMbtjn        | XP      | 434411111 | 9718085813161377 | 2006-01-02 15:04:05 | GC       |     50000.00 |     0.4985 |    -10.00 |         10.00 |             1 |              0 | D6xRRXDa43Iz7J0DkO4qRq63T6jGzwWcoaCdIygGIWREWrrkeNvd2DMxTnFgDFzvsAJdhQwPzbMGjiHqNB0uKv7s10nRusg13QDUlgHtZs6qDh6byxnP7ECAxWEIgKRE0a5U47tRsOmrjnuiOYQpxP8NkrpujnUr5pzFEYkm5r2V9ZxCvjXnCrRk4IyjONECVMhY5jJLSv3wF1bqJkUT9aDKtd9ryB724wjo9ru9dbRnJvmS7ObIcmgB2X1sci1BfkEybJkjrze6Iqx38LVPAgormlCacdUN1EEp6UFhh6udiG8LypPnXjGCGqnFOjM8IwWfnmGWTfD6WZksktgxcQx2JzL0rHxMxxmkkCSyUv6Z24sXcOUhZTa89U6P5gQCuGQ3AhZuwKXvsizF9Odj29V6ndG88WuUagdt40rwaX250vpPeTRQwa
+(10 rows)
+
+
+Time: 9ms total (execution 4ms / network 5ms)
+
+root@localhost:26257/tpcc>
+```
+
 #### 3.3. 同步数据库
 
 现在刚安装好CockroachDB，需要往CockroachDB里创建一些数据库和表格才行。
