@@ -1,5 +1,5 @@
-# 下载CockroachDB Windows版本
-$version = "v25.4.2"
+﻿# 下载CockroachDB Windows版本
+$version = "v22.2.19"
 $url = "https://binaries.cockroachdb.com/cockroach-$version.windows-6.2-amd64.zip"
 $output = "cockroach-$version.zip"
 

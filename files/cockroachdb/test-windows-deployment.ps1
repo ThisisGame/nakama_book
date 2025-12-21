@@ -1,4 +1,4 @@
-# Windows部署测试脚本
+﻿# Windows部署测试脚本
 Write-Host "=== CockroachDB Windows部署测试 ===" -ForegroundColor Cyan
 Write-Host "时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
 

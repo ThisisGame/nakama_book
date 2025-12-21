@@ -1,4 +1,4 @@
-# Windows原生多节点启动脚本（修正版）
+﻿# Windows原生多节点启动脚本（修正版）
 param(
     [switch]$ShowWindows = $true
 )

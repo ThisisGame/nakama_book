@@ -1,4 +1,4 @@
-# 停止Windows上的CockroachDB集群
+﻿# 停止Windows上的CockroachDB集群
 Write-Host "正在停止CockroachDB集群..." -ForegroundColor Yellow
 
 # 方法1：通过进程名停止
