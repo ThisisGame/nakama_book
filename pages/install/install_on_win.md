@@ -120,6 +120,27 @@ Nakama提供了一个命令来自动创建数据库和表格。
 
 ![](../../imgs/install/start-windows-cluster.png)
 
+CockroachDB内置了Bench工具，执行命令` .\cockroach.exe workload init tpcc --warehouses=10 --drop` 可以向数据库插入大量数据。
+
+![](../../imgs/install/tpcc_bench.png)
+
+然后在后台可以查看DB状态以及性能热点。
+
+![](../../imgs/install/workload_insights.png)
+
+还有其他应用类型的bench测试，输入命令` .\cockroach.exe workload init`查看。
+
+```txt
+bank         # 模拟银行转账场景
+movr         # 模拟移动应用（共享单车/汽车）
+tpcc         # TPC-C基准测试（订单处理系统）
+tpch         # TPC-H基准测试（决策支持系统）
+kv           # 简单的键值操作
+ycsb         # Yahoo! Cloud Serving Benchmark
+startrek     # Star Trek数据集
+intro        # 入门示例
+```
+
 #### 3.3. 同步数据库
 
 现在刚安装好CockroachDB，需要往CockroachDB里创建一些数据库和表格才行。
