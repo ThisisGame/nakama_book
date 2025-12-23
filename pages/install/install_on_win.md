@@ -239,6 +239,20 @@ Nakama提供了一个命令来自动创建数据库和表格。
 
 ![](../../imgs/install/firewall.jpg)
 
+也可以连接多个db节点，执行批处理(run_nakama_cockroachdb_cluster.bat)启动连接3个节点。
+
+![](../../imgs/install/log_view_dbs.png)
+
+```log
+{"level":"info","ts":"2025-12-24T00:39:39.537+0800","caller":"v3/main.go:149","msg":"Database connections","dsns":["root@localhost:26257","root@localhost:26258","root@localhost:26259"]}
+{"level":"info","ts":"2025-12-24T00:39:39.564+0800","caller":"server/db.go:140","msg":"Database information","version":"CockroachDB CCL v22.2.19 (x86_64-w64-mingw32, built 2024/02/26 16:36:47, go1.19.6)"}
+```
+
+看到输出log里有3个节点了。
+
+在后台也可以看到DB节点信息。
+
+![](../../imgs/install/console_view_dbs.png)
 
 ### 4. 使用Nakama后台
 
